@@ -1,0 +1,71 @@
+<html>
+<head>
+	<link rel="shortcut icon" type="image/png" href="./favicon.png" />
+	<style type="text/css">
+		#map{
+			width: 100%;
+			height: 400px;
+			background-color: grey;
+		}
+	</style>
+	<script type="text/javascript">
+		var googleMapsApiKey = "";
+		var position = [18.5204,73.8567];
+		var marker = null;
+		function initializeMaps () {
+			var latlng = new google.maps.LatLng(position[0], position[1]);
+			var map = new google.maps.Map(document.getElementById('map'),{
+				zoom:4,
+				center:latlng
+			});
+
+			marker = new google.maps.Marker({
+				position:latlng,
+				map:map									
+			});
+
+			google.maps.event.addListener(map,'click',function (event) {
+				//set these latlong in a div
+				var result = [event.latLng.lat(), event.latLng.lng()];
+				transition(result);
+			})
+		}
+
+		var numDeltas = 100;
+		var delay = 10; //ms
+		var i = 0;
+		var deltaLat, deltaLng;
+
+		function transition (result) {
+			i=0;
+			deltaLat = (result[0] - position[0])/numDeltas;
+			deltaLng = (result[1] - position[1])/numDeltas;
+			moveMarker();
+			document.getElementById("latitude").innerHTML =  position[0];
+			document.getElementById("longitude").innerHTML =  position[1];
+		}
+
+		function moveMarker() {
+			position[0]+=deltaLat;
+			position[1]+=deltaLng;
+			var latlng = new google.maps.LatLng(position[0],position[1]);
+			marker.setTitle('Latitude:'+position[0]+'|'+'Longitude:'+position[1]);
+			marker.setPosition(latlng);
+			if(i!=numDeltas){
+				i++;
+				setTimeout(moveMarker, delay);
+			}
+		}
+	</script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCob8LX43Gj0MeFE19_ruMZ6-wfy7nAv10&callback=initializeMaps" async defer>
+	</script>
+</head>
+<body>
+	<h3>My Google Maps Demo</h3>
+	<div id="map">
+	
+</div>
+<p id="latitude"></p>	
+	<p id="longitude"></p>
+</body>
+</html>
